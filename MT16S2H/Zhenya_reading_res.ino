@@ -12,9 +12,10 @@ void setup() {
 void loop() {
   lcd.clear();
   lcd.setCursor (0,0);
-  lcd.print ("value from A0");
+  lcd.print ("A0 value = ");
   int T=analogRead (A0); 
-  lcd.setCursor(0, 1);
+  lcd.setCursor(12, 0);
   lcd.print (T);
   delay (100);
+
 }
