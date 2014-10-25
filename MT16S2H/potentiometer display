@@ -1,0 +1,76 @@
+/*
+  LiquidCrystal Library - scrollDisplayLeft() and scrollDisplayRight()
+ 
+ Demonstrates the use a 16x2 LCD display.  The LiquidCrystal
+ library works with all LCD displays that are compatible with the 
+ Hitachi HD44780 driver. There are many of them out there, and you
+ can usually tell them by the 16-pin interface.
+ 
+ This sketch prints "Hello World!" to the LCD and uses the
+ scrollDisplayLeft() and scrollDisplayRight() methods to scroll
+ the text.
+ 
+  The circuit:
+ * LCD RS pin to digital pin 12
+ * LCD Enable pin to digital pin 11
+ * LCD D4 pin to digital pin 5
+ * LCD D5 pin to digital pin 4
+ * LCD D6 pin to digital pin 3
+ * LCD D7 pin to digital pin 2
+ * LCD R/W pin to ground
+ * 10K resistor:
+ * ends to +5V and ground
+ * wiper to LCD VO pin (pin 3)
+ 
+ Library originally added 18 Apr 2008
+ by David A. Mellis
+ library modified 5 Jul 2009
+ by Limor Fried (http://www.ladyada.net)
+ example added 9 Jul 2009
+ by Tom Igoe 
+ modified 22 Nov 2010
+ by Tom Igoe
+ 
+ This example code is in the public domain.
+ 
+ http://arduino.cc/en/Tutorial/LiquidCrystalScroll
+
+ */
+
+// include the library code:
+#include <LiquidCrystal.h>
+#define PINPUT A0
+
+// initialize the library with the numbers of the interface pins
+LiquidCrystal lcd(4, 5, 10, 11, 12, 13);
+
+void setup() 
+{ 
+  lcd.begin(16, 2);
+}
+
+signed char d, k;
+unsigned char inp, linp;
+void loop() {
+  inp = analogRead(PINPUT) >> 2;
+  if(abs(inp - linp) > 1)
+  {
+    lcd.setCursor(0,0);
+    lcd.print("Pe\xB7");
+    lcd.print("\xB8");
+    lcd.print("c\xBFop1 =     "); // PE3UCTOP
+    lcd.setCursor(12,0);
+    lcd.print(inp);
+    lcd.setCursor(0,1);
+    k=16;
+    for(d = map(inp,0,255,0,16); d >= 0; d--, k--)
+      lcd.print("\xFF");
+    
+    for(; k>=0; k--)
+      lcd.print(" ");
+      
+      delay(10);
+    
+    linp = inp;
+  }
+}
