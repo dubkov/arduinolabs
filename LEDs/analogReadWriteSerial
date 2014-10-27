@@ -1,15 +1,15 @@
-int value = 0;
-static int ledPin;
+int value = 0;                    //переменная для значения ручки
+static int ledPin;                //пин со светодиодом
 
 void setup (){
-  Serial.begin (9600);  
+  Serial.begin (9600);            //инициализация последовательного соединения с ПК
 }
 
 
 void loop(){
-  int value = analogRead (A0);
-  value=map(value,0,1023,0,255);
-  analogWrite(ledPin,value);
-  Serial.println (value);
-  delay(30);
+  value = analogRead (A0);        //читаем ручку  
+  value=map(value,0,1023,0,255);  //переопределяем пределы с 0-1023 до 0-255
+  Serial.println (value);         //выводим значение в консоль
+  analogWrite(ledPin,value);      //пишем значение на пин светодиода, меняется яркость
+  delay(30);                      //ждем 30 миллисекунд
 }
