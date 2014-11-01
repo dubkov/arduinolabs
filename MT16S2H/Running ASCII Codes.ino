@@ -1,4 +1,5 @@
 //http://wiki.amperka.ru/Схемы-подключения:подключение-текстового-экрана
+//http://files.amperka.ru/datasheets/MT-16S2H.pdf
 
 #include <LiquidCrystal.h>
 
