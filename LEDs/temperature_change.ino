@@ -99,3 +99,5 @@ void loop(void) {
     }
   }
 }
+
+void enotPoloskun(){}
