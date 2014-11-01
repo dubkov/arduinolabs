@@ -1,0 +1,23 @@
+int buttonState=1, ledState=0, buttonStatePrev=1;
+
+void setup(){
+  pinMode (9,OUTPUT);
+}
+
+void loop(){
+  buttonState = digitalRead(4); //опросить кнопку
+  if (buttonState==0){          //если текущее состояние кнопки низкое
+    if (buttonStatePrev==1){    //если предыдущее состояние кнопки высокое
+      if (ledState==0){         //если светод выключен
+        digitalWrite(9,HIGH);   //включить светодиод
+        ledState=1;             //запомнить, что светодиод включен
+      }
+      else {                    //если светодиод включен
+        digitalWrite(9, LOW);   //выключить светодиод
+        ledState=0;             //запомнить, что светодиод выключен
+      }
+    }
+  }
+  delay (100);                  //подавление дребезга
+  buttonStatePrev = buttonState;  //запомнить предыдущее состояние кнопки
+}
