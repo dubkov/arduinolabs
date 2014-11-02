@@ -6,27 +6,6 @@ OneWire  ds(8);
 
 void setup() {
   Serial.begin(9600);
-  randomSeed(analogRead(A1)); 
-  lcd.begin(16, 2);
-  lcd.print("Loading... ");
-  int percentOfBreak = 71;
-  
-  for (int percent=0;percent<=99;percent++){
-    lcd.print(percent);
-    lcd.print("%");
-    if (percent <= percentOfBreak){
-      delay (random(10,400));  
-    }
-    else {
-      delay (1500);
-    }
-    lcd.setCursor (12,0);
-    
-    if (percent == percentOfBreak){
-      delay (200);
-    }
-  }
-  lcd.clear();
 }
 
 void loop(void) {
@@ -99,5 +78,3 @@ void loop(void) {
     }
   }
 }
-
-void enotPoloskun(){}
