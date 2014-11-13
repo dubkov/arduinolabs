@@ -1,0 +1,46 @@
+int static L1=8, L2=9, L3=10, L4=11, L5=12;
+int Pin=A0;
+int p=0;
+void setup(){
+  Serial.begin(9600);
+  pinMode (L1, OUTPUT);
+  pinMode (L2, OUTPUT);
+  pinMode (L3, OUTPUT);
+  pinMode (L4, OUTPUT);
+  pinMode (L5, OUTPUT);
+}
+void loop(){
+  int v=0;
+  p =analogRead(Pin);
+  if (p>170){
+    digitalWrite (L1, 50);
+    if (p>340){
+      digitalWrite (L2, 50);
+      if (p>510){
+        digitalWrite (L3, 50);
+        if (p>680){
+          digitalWrite (L4, 50);
+          if (p>850){
+            digitalWrite (L5, 50);
+          }
+          else {
+            digitalWrite (L5, LOW);
+          }
+        }
+        else{
+          digitalWrite (L4, LOW);
+        }
+      }
+      else {
+        digitalWrite (L3, LOW);
+      }
+    }
+    else {
+      digitalWrite (L2, LOW);
+    }
+  }
+  else {
+    digitalWrite (L1, LOW);
+  }
+  delay (100);
+}
