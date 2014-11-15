@@ -1,0 +1,116 @@
+//Реализована функция вывода числа на заданный индикатор
+//GetTemp(void) не используется - это "наследство" от ардуиновского примера чтения температуры.
+
+#define REFRESH_TIME 5
+#define CHANGE_TIME 100
+
+boolean DIGITS[10][8]={
+  {0, 0, 0, 0, 0, 0, 1, 1},  //0
+  {1, 0, 0, 1, 1, 1, 1, 1},  //1
+  {0, 0, 1, 0, 0, 1, 0, 1},  //2
+  {0, 0, 0, 0, 1, 1, 0, 1},  //3
+  {1, 0, 0, 1, 1, 0, 0, 1},  //4
+  {0, 1, 0, 0, 1, 0, 0, 1},  //5
+  {0, 1, 0, 0, 0, 0, 0, 1},  //6
+  {0, 0, 0, 1, 1, 1, 1, 1},  //7
+  {0, 0, 0, 0, 0, 0, 0, 1},  //8
+  {0, 0, 0, 0, 1, 0, 0, 1},  //9
+};
+
+void showDigit(int segment, int digit){
+  //чистим индикатор
+  for (int i=2; i<=13; i++){
+    digitalWrite(i, HIGH);
+  }
+  
+  //устанавливаем индикатор
+  digitalWrite(segment+10, LOW);
+   
+  //выводим на индикатор цифру
+  for (int i=0; i<8; i++){
+    digitalWrite(i+2, !DIGITS[digit][i]);
+  }
+}
+
+void setup()
+{
+  for (int i=2; i<=13; i++){
+    pinMode(i, OUTPUT);
+  }
+ Serial.begin(9600);
+
+  //Serial.println(F("Internal Temperature Sensor"));*/
+}
+
+int value=0;
+int segment=3;
+
+void refresh()
+{
+  int val=value;
+  for (int i=0; i<3-segment; i++){
+    val/=10;
+  }
+  showDigit(segment, val%10);
+  segment--;
+  if (segment<0)
+    segment=3;
+  
+}
+
+void change()
+{
+  value++;
+}
+
+int rTimer=0, rTimerPrev=0;
+int cTimer=0, cTimerPrev=0;
+
+void loop()
+{
+  rTimer=millis();
+  cTimer=millis();
+  
+  if (rTimer - rTimerPrev >= REFRESH_TIME){
+    refresh();
+    rTimerPrev=rTimer;
+  }
+  
+  if (cTimer - cTimerPrev >= CHANGE_TIME)
+  {
+    change();
+    cTimerPrev=cTimer;
+  }
+  
+}
+
+double GetTemp(void)
+{
+  unsigned int wADC;
+  double t;
+
+  // The internal temperature has to be used
+  // with the internal reference of 1.1V.
+  // Channel 8 can not be selected with
+  // the analogRead function yet.
+
+  // Set the internal reference and mux.
+  ADMUX = (_BV(REFS1) | _BV(REFS0) | _BV(MUX3));
+  ADCSRA |= _BV(ADEN);  // enable the ADC
+
+  delay(20);            // wait for voltages to become stable.
+
+  ADCSRA |= _BV(ADSC);  // Start the ADC
+
+  // Detect end-of-conversion
+  while (bit_is_set(ADCSRA,ADSC));
+
+  // Reading register "ADCW" takes care of how to read ADCL and ADCH.
+  wADC = ADCW;
+
+  // The offset of 324.31 could be wrong. It is just an indication.
+  t = (wADC - 324.31 ) / 1.22;
+
+  // The returned temperature is in degrees Celcius.
+  return (t);
+}
