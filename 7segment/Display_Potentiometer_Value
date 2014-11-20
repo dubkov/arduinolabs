@@ -1,0 +1,53 @@
+int number[10]={
+    0b00111111, //0
+    0b00000110, 
+    0b01011011, 
+    0b01001111,
+    0b01100110,
+    0b01101101,
+    0b01111101,
+    0b00000111,
+    0b01111111,
+    0b01101111 //9
+    };
+  
+  int zerosegment,firstsegment,secondsegment,thirdtsegment, previousValue = 0;
+  double t;  
+void setup()
+{
+  DDRD=0xff;
+  DDRB=0xff;
+  PINB=0b00111100;
+}
+
+void loop(){
+  
+  int value = analogRead(A0);
+  if (previousValue - 1 == value || previousValue + 1 == value){
+    value = previousValue;
+  }
+  previousValue = value;
+  
+  // разделяем число на разряды 
+  zerosegment=value%100/10;
+  firstsegment=value%1000/100;
+  secondsegment=value/1000;
+  thirdtsegment=value%10;
+
+  
+  PORTB=0xff-0b00001000;
+  PORTD=number[zerosegment];
+  delay(5);
+  
+  PORTB=0xff-0b00000100;
+  PORTD=number[firstsegment];
+  delay(5);
+  
+  PORTB=0xff-0b00010000;
+  PORTD=number[secondsegment];
+  delay(5);
+  
+  PORTB=0xff-0b00100000;
+  PORTD=number[thirdtsegment];
+  delay(5);
+}
