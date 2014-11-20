@@ -1,0 +1,64 @@
+// Порядок сегментов напутан, точку не подлючал 
+
+int number[10]={
+    0b00111111, //0
+    0b00000110, 
+    0b01011011, 
+    0b01001111,
+    0b01100110,
+    0b01101101,
+    0b01111101,
+    0b00000111,
+    0b01111111,
+    0b01101111 //9
+    };
+  
+  int i,zerosegment,firstsegment,secondsegment,thirstsegment,i1=0,i2=1,i3=1,i4;
+  double t;  
+void setup()
+{
+  DDRD=0xff;
+  DDRB=0xff;
+  PINB=0b00111100;
+}
+
+void loop(){
+  
+  if (i==50) {
+  i4=i3+i2;
+  i1=i2;
+  i2=i3;
+  i3=i4;
+  
+  if (i3 > 10000) { i1=0; i2=1; i3=1;}; // сегмента всего 4 поэтому если более 10000 переходим к началу 
+  // разделяем число на разряды 
+  firstsegment=i3%1000/100;
+  zerosegment=i3%100/10;
+  secondsegment=i3/1000;
+  thirstsegment=i3%10;
+  i=0;
+
+  } 
+  
+  i++;
+  
+  PORTB=0xff-0b00000100;
+  PORTD=number[firstsegment];
+  delay(5);
+  
+  PORTB=0xff-0b00001000;
+  PORTD=number[zerosegment];
+  delay(5);
+  
+  PORTB=0xff-0b00010000;
+  PORTD=number[secondsegment];
+  delay(5);
+  
+  PORTB=0xff-0b00100000;
+  PORTD=number[thirstsegment];
+  delay(5);
+  i1++;
+  
+
+  
+}
