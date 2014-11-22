@@ -1,13 +1,10 @@
 #include <SPI.h>
-// TODO: in Release Candidate redefine vaska as if(0)
-#define vaska if(1)
 #define pM pinMode
 
 void setup()
 {
   // init standards
-//  SPI.begin();
-  vaska Serial.begin(19200);
+  SPCR = (1<<SPE);
   
   // Pin modes for leds:
   //         654321
@@ -16,33 +13,42 @@ void setup()
   DDRB = 0b00000011;
   // Pin modes for SPI:
   pM(SCK,INPUT);  
-  pM(MISO,INPUT);  
-  pM(MOSI,OUTPUT);  
+  pM(MISO,OUTPUT);  
+  pM(MOSI,INPUT);  
   pM(SS,INPUT);
   
   // DOUBLE SPEED!!!
   //SPSR |= 1;
-  vaska Serial.println("Receiving end!");
 }
 
 unsigned char i=1;
+void startupDemo()
+{
+  for(i=0; i<4; i++)
+  {  lightUp(255);  delay(100);
+     lightUp( 0 );  delay(100);  }
+  for(i=0; i<8; i++)
+  {  lightUp(1<<(i%8));  delay(100);  }
+  for(i=6; i!=255; i--)
+  {  lightUp(1<<i);  delay(100);  }
+  lightUp(0);
+}
+
+
 void loop()
 {
-  while (digitalRead(SS_PIN)==LOW){
     lightUp(spi_receive());
     delay(1);
-  }
 }
 
 void lightUp(unsigned char bight)
 {
-  vaska Serial.println((int) bight);
   PORTC = bight;
   PORTB = bight >> 6;
 }
 
 unsigned char spi_receive()
 {
-  while (!(SPSR & (1<<SPIF)));  // spif means zaebis in afrikaans
+  while (!(SPSR & (1<<SPIF)));
   return SPDR;                    
 }
