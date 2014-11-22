@@ -1,21 +1,43 @@
+
 #include <SPI.h>
 #define SS_PIN 10
 byte byte2send=0x0A;
+ 
+int buttonState;            
+int lastButtonState = LOW;  
+long lastDebounceTime = 0;
+long debounceDelay = 50;  
  
 void setup() {
   Serial.begin(9600);
   pinMode(SS_PIN, OUTPUT);
   SPI.begin();
-  for(int i=2;i<10;i++) pinMode(i, OUTPUT);
- 
+  for(int i=2;i<10;i++)
+    pinMode(i, OUTPUT);
   SPI.begin();
+  pinMode(0, INPUT);
 }
-
+ 
 void loop () {
-  Serial.println(byte2send,BIN);
-  digitalWrite(SS_PIN, LOW);
-  SPI.transfer(byte2send);
-  digitalWrite(SS_PIN, HIGH);
+ 
+  int reading = digitalRead(0);
+ 
+ 
+   if ((millis() - lastDebounceTime) > debounceDelay) {
+    if (reading != buttonState) {
+      buttonState = reading;
+      if (buttonState == LOW) {
+        byte2send ++;
+        Serial.println(byte2send,BIN);
+        digitalWrite(SS_PIN, LOW);
+        SPI.transfer(byte2send);
+        digitalWrite(SS_PIN, HIGH);
+        delay(60);
+      }
+    }
+  }
+ 
+ 
   digitalWrite(2,byte2send & (1 << 0));
   digitalWrite(3,byte2send & (1 << 1));
   digitalWrite(4,byte2send & (1 << 2));
@@ -24,5 +46,5 @@ void loop () {
   digitalWrite(7,byte2send & (1 << 5));
   digitalWrite(8,byte2send & (1 << 6));
   digitalWrite(9,byte2send & (1 << 7));
-  byte2send ++;
+ 
 }
