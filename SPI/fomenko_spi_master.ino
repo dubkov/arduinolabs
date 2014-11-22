@@ -38,7 +38,7 @@ void loop() {
 
 void lightUp(unsigned char bight)
 {
-  vaska Serial.println((int) bight);
+  vaska Serial.println(bight, BIN);
   PORTC = bight;
   PORTB = bight >> 6;
 }
