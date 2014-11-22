@@ -1,0 +1,12 @@
+void setup(){
+  for(int i=2; i<10; i++){
+    pinMode (i, OUTPUT);}
+  Serial.begin(9600);
+}
+
+void loop(){
+  if (Serial.available()>0){
+      char N= Serial.read();
+      digitalWrite((int)(N-'0')+1, HIGH);
+    }
+}
