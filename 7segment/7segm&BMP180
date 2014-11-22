@@ -1,3 +1,4 @@
+/* This sketch for 7segm display kem5461AG and barometr BMP180*/
 #include <Wire.h> 
 #include <BMP085.h>
  
