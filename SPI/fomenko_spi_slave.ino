@@ -28,8 +28,10 @@ void setup()
 unsigned char i=1;
 void loop()
 {
-  lightUp(spi_receive());
-  delay(1);
+  while (digitalRead(SS_PIN)==LOW){
+    lightUp(spi_receive());
+    delay(1);
+  }
 }
 
 void lightUp(unsigned char bight)
