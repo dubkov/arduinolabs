@@ -28,7 +28,9 @@ unsigned char i=1;
 void loop() {
   if (Serial.available()){
     fight = Serial.read();
+    digitalWrite(10,LOW);
     SPI.transfer(fight);
+    digitalWrite(10,HIGH);
     lightUp(fight);
   }
   
