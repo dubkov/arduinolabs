@@ -1,11 +1,9 @@
-/* This sketch for 7segm display kem5461AG and barometr BMP180*/
-
 #include <Wire.h> 
 #include <BMP085.h>
  
 BMP085 dps = BMP085();    
  
-long Temperature = 0;
+long Temperature = 0, Pressure = 0;
 boolean DIGITS[11][8]={
   {0, 0, 0, 0, 0, 0, 1, 1},  //0
   {1, 0, 0, 1, 1, 1, 1, 1},  //1
@@ -21,7 +19,7 @@ boolean DIGITS[11][8]={
   };
 int segment, digit;
 int zerosegment,firstsegment,secondsegment,thirdtsegment;
-int T;
+int T,P;
 
 void showDigit(int segment, int digit){
   //чистим индикатор
@@ -45,16 +43,18 @@ void setup(void) {
   for (int i=2; i<=13; i++){
     pinMode(i, OUTPUT);
   }
+  
 }          
  
 void loop() { 
+  for (int x=0; x<=75; x++)
+  {
   dps.getTemperature(&Temperature);
   T = Temperature*10;
   zerosegment=T%100/10;
   firstsegment=T%1000/100;
   secondsegment=T/1000;
-  thirdtsegment=T%10;
-  
+    
   showDigit(0, zerosegment); 
   delay(5);
   
@@ -67,5 +67,25 @@ void loop() {
   showDigit(2, secondsegment);
   delay(5);
 
-  showDigit(3, thirdtsegment);
+  }
+  
+  for (int x=0; x<=75; x++)
+  {
+  dps.getPressure(&Pressure);
+  P = Pressure/133.3;
+  
+  firstsegment=P%100/10;
+  secondsegment=P%1000/100;
+  zerosegment=P%10;
+  
+  showDigit(0, zerosegment); 
+  delay(5);
+  
+  showDigit(1, firstsegment);
+  delay(5);
+  
+  showDigit(2, secondsegment);
+  delay(5);
+
+  }
 }
