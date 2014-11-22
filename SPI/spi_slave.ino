@@ -1,6 +1,7 @@
 #include <SPI.h>
 // TODO: in Release Candidate redefine vaska as if(0)
 #define vaska if(1)
+#define pM pinMode
 
 void setup()
 {
@@ -8,14 +9,19 @@ void setup()
   SPI.begin();
   vaska Serial.begin(19200);
   
-  // corresponds to leds:
+  // Pin modes for leds:
   //         654321
   DDRC = 0b00111111;
   //             87
   DDRB = 0b00000011;
+  // Pin modes for SPI:
+  pM(SCK,INPUT);  
+  pM(MISO,INPUT);  
+  pM(MOSI,OUTPUT);  
+  pM(SS,INPUT);
   
   // DOUBLE SPEED!!!
-  SPSR |= 1;
+  //SPSR |= 1;
   vaska Serial.println("Receiving end!");
 }
 
