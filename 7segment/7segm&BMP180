@@ -1,0 +1,71 @@
+/* This sketch for 7segm display kem5461AG and barometr BMP180*/
+
+#include <Wire.h> 
+#include <BMP085.h>
+ 
+BMP085 dps = BMP085();    
+ 
+long Temperature = 0;
+boolean DIGITS[11][8]={
+  {0, 0, 0, 0, 0, 0, 1, 1},  //0
+  {1, 0, 0, 1, 1, 1, 1, 1},  //1
+  {0, 0, 1, 0, 0, 1, 0, 1},  //2
+  {0, 0, 0, 0, 1, 1, 0, 1},  //3
+  {1, 0, 0, 1, 1, 0, 0, 1},  //4
+  {0, 1, 0, 0, 1, 0, 0, 1},  //5
+  {0, 1, 0, 0, 0, 0, 0, 1},  //6
+  {0, 0, 0, 1, 1, 1, 1, 1},  //7
+  {0, 0, 0, 0, 0, 0, 0, 1},  //8
+  {0, 0, 0, 0, 1, 0, 0, 1},  //9
+  {1, 1, 1, 1, 1, 1, 1, 0},  //","
+  };
+int segment, digit;
+int zerosegment,firstsegment,secondsegment,thirdtsegment;
+int T;
+
+void showDigit(int segment, int digit){
+  //чистим индикатор
+  for (int i=2; i<=13; i++){
+    digitalWrite(i, HIGH);
+  }
+  
+  //устанавливаем индикатор
+  digitalWrite(segment+10, LOW);
+   
+  //выводим на индикатор цифру
+  for (int i=0; i<8; i++){
+    digitalWrite(i+2, !DIGITS[digit][i]);
+  }
+}
+
+ 
+void setup(void) { 
+  Wire.begin(); 
+  dps.init();  
+  for (int i=2; i<=13; i++){
+    pinMode(i, OUTPUT);
+  }
+}          
+ 
+void loop() { 
+  dps.getTemperature(&Temperature);
+  T = Temperature*10;
+  zerosegment=T%100/10;
+  firstsegment=T%1000/100;
+  secondsegment=T/1000;
+  thirdtsegment=T%10;
+  
+  showDigit(0, zerosegment); 
+  delay(5);
+  
+  showDigit(1, firstsegment);
+  delay(5);
+  
+  showDigit(1, 10);
+  delay(5);
+  
+  showDigit(2, secondsegment);
+  delay(5);
+
+  showDigit(3, thirdtsegment);
+}
