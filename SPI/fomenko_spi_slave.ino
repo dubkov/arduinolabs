@@ -6,7 +6,7 @@
 void setup()
 {
   // init standards
-  SPI.begin();
+//  SPI.begin();
   vaska Serial.begin(19200);
   
   // Pin modes for leds:
