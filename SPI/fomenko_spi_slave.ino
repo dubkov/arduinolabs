@@ -3,9 +3,8 @@
 
 void setup()
 {
-  // init standards
+  // enable SPI bus
   SPCR = (1<<SPE);
-  
   // Pin modes for leds:
   //         654321
   DDRC = 0b00111111;
@@ -16,7 +15,6 @@ void setup()
   pM(MISO,OUTPUT);  
   pM(MOSI,INPUT);  
   pM(SS,INPUT);
-  
   // DOUBLE SPEED!!!
   //SPSR |= 1;
 }
@@ -37,7 +35,7 @@ void startupDemo()
 
 void loop()
 {
-    lightUp(spi_receive());
+    lightUp(spiReceive());
     delay(1);
 }
 
@@ -47,7 +45,7 @@ void lightUp(unsigned char bight)
   PORTB = bight >> 6;
 }
 
-unsigned char spi_receive()
+unsigned char spiReceive()
 {
   while (!(SPSR & (1<<SPIF)));
   return SPDR;                    
