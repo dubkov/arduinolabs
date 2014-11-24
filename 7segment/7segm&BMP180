@@ -1,6 +1,6 @@
-/* 
-This sketch for 7segm display kem5461AG and barometr BMP180
-pins:
+/*
+This sketch for 7segm display kem5461AG and
+barometr BMP180 pins:
 7segm   1-2-3-4-5-6--7-8--9--10-11-12
 Arduino 6-5-9-4-8-10-3-11-12-7--2--13
 BMP180 SDA-->A4 Arduino
@@ -8,11 +8,11 @@ BMP180 SDA-->A4 Arduino
        GND-->GND
        VIN-->3v3
 */
-#include <Wire.h> 
+#include <Wire.h>
 #include <BMP085.h>
- 
-BMP085 dps = BMP085();    
- 
+
+BMP085 dps = BMP085();
+
 long Temperature = 0, Pressure = 0;
 boolean DIGITS[11][8]={
   {0, 0, 0, 0, 0, 0, 1, 1},  //0
@@ -36,66 +36,61 @@ void showDigit(int segment, int digit){
   for (int i=2; i<=13; i++){
     digitalWrite(i, HIGH);
   }
-  
   //устанавливаем индикатор
   digitalWrite(segment+10, LOW);
-   
   //выводим на индикатор цифру
   for (int i=0; i<8; i++){
     digitalWrite(i+2, !DIGITS[digit][i]);
   }
 }
 
- 
-void setup(void) { 
-  Wire.begin(); 
-  dps.init();  
+void setup(void) {
+  Wire.begin();
+  dps.init();
   for (int i=2; i<=13; i++){
     pinMode(i, OUTPUT);
   }
-  
-}          
- 
-void loop() { 
-  for (int x=0; x<=75; x++)
-  {
-  dps.getTemperature(&Temperature);
-  T = Temperature*10;
-  zerosegment=T%100/10;
-  firstsegment=T%1000/100;
-  secondsegment=T/1000;
+}
+
+void loop()
+{
+    dps.getTemperature(&Temperature);
+    T = Temperature*10;
+    zerosegment=T%100/10;
+    firstsegment=T%1000/100;
+    secondsegment=T/1000;
     
-  showDigit(0, zerosegment); 
-  delay(5);
+    for (int x=0; x<=100; x++)
+      {
+      showDigit(0, zerosegment); 
+      delay(5);
   
-  showDigit(1, firstsegment);
-  delay(5);
+      showDigit(1, firstsegment);
+      delay(5);
   
-  showDigit(1, 10);
-  delay(5);
+      showDigit(1, 10);
+      delay(5);
   
-  showDigit(2, secondsegment);
-  delay(5);
-
-  }
+      showDigit(2, secondsegment);
+      delay(5);
+      }
+      
+    dps.getPressure(&Pressure);
+    P = Pressure/133.3;
   
-  for (int x=0; x<=75; x++)
-  {
-  dps.getPressure(&Pressure);
-  P = Pressure/133.3;
+    firstsegment=P%100/10;
+    secondsegment=P%1000/100;
+    zerosegment=P%10;
+    
+    for (int x=0; x<=100; x++)
+      {
+      showDigit(0, zerosegment); 
+      delay(5);
   
-  firstsegment=P%100/10;
-  secondsegment=P%1000/100;
-  zerosegment=P%10;
+      showDigit(1, firstsegment);
+      delay(5);
   
-  showDigit(0, zerosegment); 
-  delay(5);
-  
-  showDigit(1, firstsegment);
-  delay(5);
-  
-  showDigit(2, secondsegment);
-  delay(5);
-
-  }
+      showDigit(2, secondsegment);
+      delay(5);
+      }
 }
