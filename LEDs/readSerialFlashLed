@@ -6,7 +6,7 @@ void setup(){
 
 void loop(){
   if (Serial.available()>0){
-      char N= Serial.read();
-      digitalWrite((int)(N-'0')+1, HIGH);
+      int N = (int)(Serial.read()-'0')+1;
+      digitalWrite(N, !digitalRead(N));
     }
 }
