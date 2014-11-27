@@ -1,15 +1,37 @@
 /*
-This sketch for 7segm display kem5461AG and
-barometr BMP180 pins:
+This sketch for 7segm display kem5461AG with 
+real-time clock DS1302 and barometr BMP180 pins:
 7segm   1-2-3-4-5-6--7-8--9--10-11-12
 Arduino 6-5-9-4-8-10-3-11-12-7--2--13
 BMP180 SDA-->A4 Arduino
        SCL-->A5
        GND-->GND
        VIN-->3v3
+ds1302 rst-->A1 Arduino
+       I/O-->A2
+       SCK-->A3
+       VCC-->5v
+       GND-->GND
 */
 #include <Wire.h>
 #include <BMP085.h>
+#include <stdio.h>
+#include <DS1302.h>
+
+namespace {
+
+// Set the appropriate digital I/O pin connections. These are the pin
+// assignments for the Arduino as well for as the DS1302 chip. See the DS1302
+// datasheet:
+//
+//   http://datasheets.maximintegrated.com/en/ds/DS1302.pdf
+const int kCePin   = 15;  // Chip Enable
+const int kIoPin   = 16;  // Input/Output
+const int kSclkPin = 17;  // Serial Clock
+
+// Create a DS1302 object.
+DS1302 rtc(kCePin, kIoPin, kSclkPin);
+}  // namespace
 
 BMP085 dps = BMP085();
 
@@ -30,6 +52,7 @@ boolean DIGITS[11][8]={
 int segment, digit;
 int zerosegment,firstsegment,secondsegment,thirdtsegment;
 int T,P;
+int timehourstens, timehoursones, timeminutestens, timeminutesones;
 
 void showDigit(int segment, int digit){
   //чистим индикатор
@@ -50,6 +73,17 @@ void setup(void) {
   for (int i=2; i<=13; i++){
     pinMode(i, OUTPUT);
   }
+  // Initialize a new chip by turning off write protection and clearing the
+  // clock halt flag. These methods needn't always be called. See the DS1302
+  // datasheet for details.
+  rtc.writeProtect(false);
+  rtc.halt(false);
+  // Make a new time object to set the date and time.
+  // Sunday, September 22, 2013 at 01:38:50.
+  Time t(2014, 11, 27, 21, 59, 0, Time::kThursday);
+
+  // Set the time and date on the chip.
+  rtc.time(t);
 }
 
 void loop()
@@ -93,4 +127,27 @@ void loop()
       showDigit(2, secondsegment);
       delay(5);
       }
+      
+    Time t = rtc.time();
+    thirdtsegment=t.hr%100/10;
+    secondsegment=t.hr%10;
+    firstsegment=t.min%100/10;
+    zerosegment=t.min%10;
+ 
+    
+    for (int x=0; x<=100; x++)
+      {
+      showDigit(0, zerosegment); 
+      delay(5);
+  
+      showDigit(1, firstsegment);
+      delay(5);
+    
+      showDigit(2, secondsegment);
+      delay(5);
+      
+      showDigit(3, thirdtsegment);
+      delay(5);
+      }  
+      
 }
