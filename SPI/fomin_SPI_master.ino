@@ -1,9 +1,8 @@
-
 #include <LiquidCrystal.h>
 #include <SPI.h>
 
 #define LOW_SS 14
-#define SLAVES 4
+#define SLAVES 2
 #define lsc00 lcd.setCursor(0,0)
 #define lsc01 lcd.setCursor(8,0)
 #define lsc10 lcd.setCursor(0,1)
@@ -12,8 +11,9 @@
 
 LiquidCrystal lcd(9, 8, 5, 4, 3, 2);
 
-int ss,raw[SLAVES];
-unsigned char buff;
+unsigned int ss;
+unsigned int gaiar[SLAVES];
+unsigned char raw[SLAVES*2];
 
 void setup() {
   // set up the LCD's number of columns and rows: 
@@ -29,23 +29,28 @@ void setup() {
 }
 
 void loop() {
-  lcd.clear();
   
   
   // Read from slaves
   for(ss=0; ss<SLAVES; ss++)
   {
     PORTC &=~(1 << ss);    // pull down (hear me)
-    raw[ss]  = SPI.transfer(0);      // low byte
-    raw[ss] |= SPI.transfer(0) << 8; // high byte
+    delay(100);
+    raw[ss*2]  = SPI.transfer(0xAA); // low byte
+    delay(1);
+    raw[ss*2+1]= SPI.transfer(0xCC); // high byte
+    // Get temperature
+    gaiar[ss] = (raw[ss*2]<<8 + raw[ss*2+1]) >> 4;
     PORTC |= (1 << ss);    // restore  (i'm gone)
   }
   
+  
   // Publish data
-  lsc00; lsp((int) (raw[0]%256)); lsp(','); lsp((int) (raw[0]/256));
-  lsc01; lsp((int) (raw[1]%256)); lsp(','); lsp((int) (raw[1]/256));
-  lsc10; lsp((int) (raw[2]%256)); lsp(','); lsp((int) (raw[2]/256));
-  lsc11; lsp((int) (raw[3]%256)); lsp(','); lsp((int) (raw[3]/256));
+  lcd.clear();
+  lsc00; lsp(gaiar[0]);
+  lsc01; lsp(gaiar[1]);
+  //lsc10; lsp(gaiar[2]);
+  //lsc11; lsp(gaiar[3]);
   
   delay(10);
 }
